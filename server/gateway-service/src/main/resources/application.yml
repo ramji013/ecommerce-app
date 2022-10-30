@@ -1,0 +1,52 @@
+server:
+  port: ${PORT}
+  #port: 4000
+
+eureka:
+  client:
+    register-with-eureka: true
+    fetch-registry: true
+    service-url:
+      #defaultZone: ${EUREKA_SERVICE_URL}
+       defaultZone: http://service-discovery:8761/eureka
+  instance:
+    #hostname: ${EUREKA_INSTANCE_NAME}
+     hostname: service-discovery
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: gateway
+  endpoint:
+    gateway:
+      enabled: true
+
+spring:
+  application:
+    name:
+      gateway-service
+  cloud:
+    gateway:
+      routes:
+        - id: authentication-service
+          uri: lb://AUTHENTICATION-SERVICE
+          predicates:
+            #- Path=/payment
+            - Path=/signup, /authenticate
+
+        - id: common-data-service
+          uri: lb://COMMON-DATA-SERVICE
+          predicates:
+            #- Path=/products**, /products?prouct_id=**, /home, /tabs, /filter?q=**, /search-suggestion-list
+            - Path=/products**, /home, /tabs, /filter**, /search-suggestion-list
+
+        - id: payment-service
+          uri: lb://PAYMENT-SERVICE
+          predicates:
+            - Path=/payment
+
+        - id: search-suggestion-service
+          uri: lb://SEARCH-SUGGESTION-SERVICE
+          predicates:
+            - Path=/search-suggestion, /default-search-suggestion

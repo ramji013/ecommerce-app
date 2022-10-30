@@ -1,0 +1,14 @@
+server:
+  port: ${PORT}
+
+spring:
+  profiles:
+    active: ${ACTIVE_PROFILE}
+
+eureka:
+  client:
+    register-with-eureka: false
+    fetch-registry: false
+
+
+
